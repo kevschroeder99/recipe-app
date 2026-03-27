@@ -29,7 +29,6 @@
 
     .container { max-width: 960px; margin: 0 auto; padding: 24px 16px; }
 
-    /* Toolbar */
     .toolbar {
       display: flex;
       gap: 10px;
@@ -60,10 +59,12 @@
     .btn-primary { background: #c0392b; color: white; }
     .btn-secondary { background: #7f8c8d; color: white; }
     .btn-danger { background: #e74c3c; color: white; }
-    .btn-success { background: #27ae60; color: white; }
     .btn-outline { background: white; border: 1px solid #ccc; color: #333; }
+    .btn-ghost { background: none; border: none; cursor: pointer; color: #999; font-size: 1rem; padding: 2px 6px; }
+    .btn-ghost:hover { color: #c0392b; }
+    .btn-add { background: none; border: 1px dashed #ccc; color: #888; border-radius: 6px; padding: 6px 12px; cursor: pointer; font-size: 0.85rem; width: 100%; margin-top: 6px; }
+    .btn-add:hover { border-color: #c0392b; color: #c0392b; }
 
-    /* Recipe cards */
     .recipe-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -73,7 +74,7 @@
     .recipe-card {
       background: white;
       border-radius: 10px;
-      padding: 18px;
+      overflow: hidden;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
       cursor: pointer;
       transition: transform 0.15s, box-shadow 0.15s;
@@ -81,6 +82,23 @@
 
     .recipe-card:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
 
+    .card-image {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+    }
+
+    .card-image-placeholder {
+      width: 100%;
+      height: 100px;
+      background: linear-gradient(135deg, #fdecea, #f9f5f0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+    }
+
+    .card-body { padding: 14px 16px 16px; }
     .recipe-card h3 { font-size: 1.1rem; margin-bottom: 6px; color: #c0392b; }
 
     .recipe-card .meta {
@@ -104,7 +122,6 @@
     .badge.green { background: #eafaf1; color: #27ae60; }
     .badge.blue  { background: #eaf4fb; color: #2980b9; }
 
-    /* Modal overlay */
     .overlay {
       position: fixed; inset: 0;
       background: rgba(0,0,0,0.45);
@@ -118,7 +135,7 @@
       border-radius: 12px;
       padding: 28px;
       width: 100%;
-      max-width: 620px;
+      max-width: 640px;
       max-height: 90vh;
       overflow-y: auto;
       box-shadow: 0 8px 32px rgba(0,0,0,0.2);
@@ -147,7 +164,7 @@
       font-family: inherit;
     }
 
-    .form-group textarea { resize: vertical; min-height: 80px; }
+    .form-group textarea { resize: vertical; min-height: 60px; }
 
     .form-row { display: flex; gap: 12px; }
     .form-row .form-group { flex: 1; }
@@ -159,17 +176,110 @@
       margin-top: 20px;
     }
 
+    /* Category checkboxes */
+    .category-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .category-option {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border: 1px solid #ddd;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      user-select: none;
+      transition: all 0.15s;
+    }
+
+    .category-option:hover { border-color: #c0392b; color: #c0392b; }
+    .category-option.selected { background: #fdecea; border-color: #c0392b; color: #c0392b; font-weight: 600; }
+    .category-option input { display: none; }
+
+    /* Ingredient rows */
+    .ingredient-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .ingredient-row input { margin-bottom: 0; }
+    .ingredient-row .ing-name { flex: 2; }
+    .ingredient-row .ing-qty  { flex: 1; min-width: 70px; }
+    .ingredient-row .ing-unit { flex: 1; min-width: 70px; }
+
+    /* Step rows */
+    .step-row {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .step-num {
+      background: #c0392b;
+      color: white;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      min-width: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-top: 8px;
+    }
+
+    .step-row textarea { flex: 1; margin-bottom: 0; }
+
     /* Detail view */
     .detail-section { margin-bottom: 18px; }
-    .detail-section h4 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: #999; margin-bottom: 6px; }
-    .detail-section p { white-space: pre-wrap; line-height: 1.6; }
+    .detail-section h4 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: #999; margin-bottom: 8px; }
 
     .detail-meta {
       display: flex; flex-wrap: wrap; gap: 10px;
       margin-bottom: 18px;
     }
 
-    /* Scaling */
+    .ingredient-list { list-style: none; padding: 0; }
+    .ingredient-list li {
+      padding: 5px 0;
+      border-bottom: 1px solid #f0ece8;
+      font-size: 0.95rem;
+    }
+    .ingredient-list li:last-child { border-bottom: none; }
+    .ingredient-list .qty { color: #c0392b; font-weight: 600; margin-right: 4px; }
+
+    .step-list { padding-left: 0; list-style: none; counter-reset: steps; }
+    .step-list li {
+      counter-increment: steps;
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+      line-height: 1.6;
+    }
+    .step-list li::before {
+      content: counter(steps);
+      background: #c0392b;
+      color: white;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      min-width: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
     .scaling-bar {
       display: flex; align-items: center; gap: 12px;
       background: #fdecea; padding: 10px 16px; border-radius: 8px;
@@ -183,7 +293,33 @@
       font-size: 0.95rem; text-align: center;
     }
 
-    .scaled-ingredients { background: #f9f5f0; padding: 12px; border-radius: 8px; font-size: 0.92rem; line-height: 1.8; white-space: pre-wrap; }
+    /* Image upload */
+    .image-upload-area {
+      border: 2px dashed #ddd;
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .image-upload-area:hover { border-color: #c0392b; }
+
+    .image-preview {
+      width: 100%;
+      max-height: 200px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+
+    .detail-image {
+      width: 100%;
+      max-height: 280px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 18px;
+    }
 
     .empty-state { text-align: center; color: #aaa; margin-top: 60px; font-size: 1.1rem; }
   </style>
@@ -199,32 +335,30 @@
 
   <div class="container">
 
-    <!-- Toolbar -->
     <div class="toolbar">
       <input v-model="search" placeholder="Search recipes..." @input="fetchRecipes" />
       <select v-model="filterCategory" @change="fetchRecipes">
         <option value="">All categories</option>
-        <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
+        <option v-for="cat in availableCategories" :key="cat" :value="cat">{{ cat }}</option>
       </select>
       <button class="btn btn-primary" @click="openCreate">+ New Recipe</button>
     </div>
 
-    <!-- Recipe Grid -->
     <div v-if="recipes.length" class="recipe-grid">
-      <div
-        v-for="recipe in recipes"
-        :key="recipe.id"
-        class="recipe-card"
-        @click="openDetail(recipe)"
-      >
-        <h3>{{ recipe.name }}</h3>
-        <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;">
-          <span v-if="recipe.category" class="badge">{{ recipe.category }}</span>
-          <span v-if="recipe.difficulty" class="badge green">{{ recipe.difficulty }}</span>
-        </div>
-        <div class="meta">
-          <span v-if="recipe.prepTime">⏱ {{ recipe.prepTime }} min</span>
-          <span v-if="recipe.servings">🍴 {{ recipe.servings }} servings</span>
+      <div v-for="recipe in recipes" :key="recipe.id" class="recipe-card" @click="openDetail(recipe)">
+        <img v-if="recipe.imageUrl" :src="recipe.imageUrl" class="card-image" :alt="recipe.name" />
+        <div v-else class="card-image-placeholder">🍽️</div>
+        <div class="card-body">
+          <h3>{{ recipe.name }}</h3>
+          <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;">
+            <span v-for="cat in recipe.categories" :key="cat" class="badge">{{ cat }}</span>
+            <span v-if="recipe.difficulty" class="badge green">{{ recipe.difficulty }}</span>
+          </div>
+          <div class="meta">
+            <span v-if="recipe.prepTime">⏱ {{ recipe.prepTime }} min prep</span>
+            <span v-if="recipe.cookTime">🔥 {{ recipe.cookTime }} min cook</span>
+            <span v-if="recipe.servings">🍴 {{ recipe.servings }} servings</span>
+          </div>
         </div>
       </div>
     </div>
@@ -242,14 +376,12 @@
         <input v-model="form.name" placeholder="Recipe name" />
       </div>
 
+      <div class="form-group">
+        <label>Description</label>
+        <textarea v-model="form.description" rows="2" placeholder="Short description..."></textarea>
+      </div>
+
       <div class="form-row">
-        <div class="form-group">
-          <label>Category</label>
-          <input v-model="form.category" placeholder="e.g. Pasta, Soup..." list="cat-list" />
-          <datalist id="cat-list">
-            <option v-for="cat in categories" :value="cat" />
-          </datalist>
-        </div>
         <div class="form-group">
           <label>Difficulty</label>
           <select v-model="form.difficulty">
@@ -259,27 +391,70 @@
             <option>Hard</option>
           </select>
         </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label>Prep Time (minutes)</label>
-          <input v-model.number="form.prepTime" type="number" min="1" placeholder="e.g. 30" />
-        </div>
         <div class="form-group">
           <label>Servings</label>
           <input v-model.number="form.servings" type="number" min="1" placeholder="e.g. 4" />
         </div>
       </div>
 
-      <div class="form-group">
-        <label>Ingredients (one per line)</label>
-        <textarea v-model="form.ingredients" rows="5" placeholder="e.g.&#10;2 cups flour&#10;1 tsp salt&#10;3 eggs"></textarea>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Prep Time (min)</label>
+          <input v-model.number="form.prepTime" type="number" min="1" placeholder="e.g. 15" />
+        </div>
+        <div class="form-group">
+          <label>Cook Time (min)</label>
+          <input v-model.number="form.cookTime" type="number" min="1" placeholder="e.g. 30" />
+        </div>
       </div>
 
       <div class="form-group">
-        <label>Instructions</label>
-        <textarea v-model="form.instructions" rows="6" placeholder="Step by step instructions..."></textarea>
+        <label>Categories</label>
+        <div class="category-grid">
+          <label
+            v-for="cat in availableCategories"
+            :key="cat"
+            class="category-option"
+            :class="{ selected: form.categories.includes(cat) }"
+          >
+            <input type="checkbox" :value="cat" v-model="form.categories" />
+            {{ cat }}
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Ingredients</label>
+        <div v-for="(ing, i) in form.ingredients" :key="i" class="ingredient-row">
+          <input class="ing-name" v-model="ing.name" placeholder="Ingredient name" />
+          <input class="ing-qty" v-model.number="ing.quantity" type="number" min="0" step="0.1" placeholder="Qty" />
+          <input class="ing-unit" v-model="ing.unit" placeholder="Unit" />
+          <button class="btn-ghost" @click="form.ingredients.splice(i, 1)">×</button>
+        </div>
+        <button class="btn-add" @click="form.ingredients.push({ name: '', quantity: null, unit: '' })">+ Add ingredient</button>
+      </div>
+
+      <div class="form-group">
+        <label>Steps</label>
+        <div v-for="(step, i) in form.steps" :key="i" class="step-row">
+          <span class="step-num">{{ i + 1 }}</span>
+          <textarea v-model="step.instruction" rows="2" placeholder="Describe this step..."></textarea>
+          <button class="btn-ghost" style="margin-top:8px" @click="form.steps.splice(i, 1)">×</button>
+        </div>
+        <button class="btn-add" @click="form.steps.push({ instruction: '' })">+ Add step</button>
+      </div>
+
+      <div class="form-group">
+        <label>Image</label>
+        <div class="image-upload-area" @click="$refs.imageInput.click()">
+          <img v-if="imagePreview" :src="imagePreview" class="image-preview" alt="Preview" />
+          <img v-else-if="form.existingImageUrl" :src="form.existingImageUrl" class="image-preview" alt="Current image" />
+          <div v-else style="color:#aaa; font-size:0.9rem; padding:8px">
+            Click to upload an image (JPG or PNG)
+          </div>
+        </div>
+        <input ref="imageInput" type="file" accept="image/jpeg,image/png" style="display:none" @change="onImageSelected" />
+        <button v-if="imagePreview || form.existingImageUrl" class="btn-ghost" style="margin-top:6px; font-size:0.8rem" @click.prevent="clearImage">Remove image</button>
       </div>
 
       <div class="modal-actions">
@@ -294,28 +469,40 @@
     <div class="modal">
       <h2>{{ selected.name }}</h2>
 
+      <img v-if="selected.imageUrl" :src="selected.imageUrl" class="detail-image" :alt="selected.name" />
+
       <div class="detail-meta">
-        <span v-if="selected.category" class="badge">{{ selected.category }}</span>
+        <span v-for="cat in selected.categories" :key="cat" class="badge">{{ cat }}</span>
         <span v-if="selected.difficulty" class="badge green">{{ selected.difficulty }}</span>
-        <span v-if="selected.prepTime" class="badge blue">⏱ {{ selected.prepTime }} min</span>
+        <span v-if="selected.prepTime" class="badge blue">⏱ {{ selected.prepTime }} min prep</span>
+        <span v-if="selected.cookTime" class="badge blue">🔥 {{ selected.cookTime }} min cook</span>
         <span v-if="selected.servings" class="badge blue">🍴 {{ selected.servings }} servings</span>
       </div>
 
-      <!-- Ingredient scaling -->
-      <div v-if="selected.servings" class="scaling-bar">
-        <label>Scale to</label>
-        <input type="number" v-model.number="scaleTo" min="1" />
-        <span>servings (original: {{ selected.servings }})</span>
+      <div v-if="selected.description" class="detail-section">
+        <p style="color:#555; line-height:1.6">{{ selected.description }}</p>
       </div>
 
-      <div v-if="selected.ingredients" class="detail-section">
+      <div v-if="selected.ingredients?.length" class="detail-section">
         <h4>Ingredients</h4>
-        <div class="scaled-ingredients">{{ scaledIngredients }}</div>
+        <div v-if="selected.servings" class="scaling-bar">
+          <label>Scale to</label>
+          <input type="number" v-model.number="scaleTo" min="1" />
+          <span style="font-size:0.85rem; color:#888">servings (original: {{ selected.servings }})</span>
+        </div>
+        <ul class="ingredient-list">
+          <li v-for="ing in scaledIngredients" :key="ing.id">
+            <span v-if="ing.quantity" class="qty">{{ ing.quantity }}{{ ing.unit ? ' ' + ing.unit : '' }}</span>
+            {{ ing.name }}
+          </li>
+        </ul>
       </div>
 
-      <div v-if="selected.instructions" class="detail-section">
+      <div v-if="selected.steps?.length" class="detail-section">
         <h4>Instructions</h4>
-        <p>{{ selected.instructions }}</p>
+        <ul class="step-list">
+          <li v-for="step in selected.steps" :key="step.id">{{ step.instruction }}</li>
+        </ul>
       </div>
 
       <div class="modal-actions">
@@ -335,21 +522,55 @@ const API = '/api/recipes';
 
 createApp({
   setup() {
-    const recipes      = ref([]);
-    const search       = ref('');
-    const filterCategory = ref('');
-    const categories   = ref(['Breakfast', 'Lunch', 'Dinner', 'Dessert', 'Snack', 'Soup', 'Salad', 'Pasta', 'Baking', 'Other']);
+    const recipes            = ref([]);
+    const search             = ref('');
+    const filterCategory     = ref('');
+    const availableCategories = ref([]);
 
-    const showForm     = ref(false);
-    const editingId    = ref(null);
-    const form         = ref(emptyForm());
+    const showForm    = ref(false);
+    const editingId   = ref(null);
+    const form        = ref(emptyForm());
+    const imageFile   = ref(null);
+    const imagePreview = ref(null);
+    const removeImage  = ref(false);
 
-    const showDetail   = ref(false);
-    const selected     = ref(null);
-    const scaleTo      = ref(1);
+    const showDetail = ref(false);
+    const selected   = ref(null);
+    const scaleTo    = ref(1);
 
     function emptyForm() {
-      return { name: '', category: '', difficulty: '', prepTime: null, servings: null, ingredients: '', instructions: '' };
+      return {
+        name: '',
+        description: '',
+        difficulty: '',
+        servings: null,
+        prepTime: null,
+        cookTime: null,
+        categories: [],
+        ingredients: [{ name: '', quantity: null, unit: '' }],
+        steps: [{ instruction: '' }],
+        existingImageUrl: null,
+      };
+    }
+
+    function onImageSelected(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      imageFile.value = file;
+      removeImage.value = false;
+      imagePreview.value = URL.createObjectURL(file);
+    }
+
+    function clearImage() {
+      imageFile.value = null;
+      imagePreview.value = null;
+      removeImage.value = true;
+      form.value.existingImageUrl = null;
+    }
+
+    async function fetchCategories() {
+      const res = await axios.get('/api/categories');
+      availableCategories.value = res.data;
     }
 
     async function fetchRecipes() {
@@ -363,24 +584,62 @@ createApp({
     function openCreate() {
       editingId.value = null;
       form.value = emptyForm();
+      imageFile.value = null;
+      imagePreview.value = null;
+      removeImage.value = false;
       showForm.value = true;
     }
 
     function openEdit(recipe) {
       editingId.value = recipe.id;
-      form.value = { ...recipe };
+      form.value = {
+        name:             recipe.name,
+        description:      recipe.description || '',
+        difficulty:       recipe.difficulty  || '',
+        servings:         recipe.servings,
+        prepTime:         recipe.prepTime,
+        cookTime:         recipe.cookTime,
+        categories:       [...(recipe.categories || [])],
+        ingredients:      recipe.ingredients?.map(i => ({ name: i.name, quantity: i.quantity, unit: i.unit || '' })) || [],
+        steps:            recipe.steps?.map(s => ({ instruction: s.instruction })) || [],
+        existingImageUrl: recipe.imageUrl || null,
+      };
+      imageFile.value = null;
+      imagePreview.value = null;
+      removeImage.value = false;
       showDetail.value = false;
       showForm.value = true;
     }
 
-    function closeForm() { showForm.value = false; }
+    function closeForm() {
+      showForm.value = false;
+      imageFile.value = null;
+      imagePreview.value = null;
+    }
 
     async function saveRecipe() {
       if (!form.value.name.trim()) { alert('Recipe name is required.'); return; }
+      const payload = {
+        ...form.value,
+        ingredients: form.value.ingredients.filter(i => i.name.trim()),
+        steps: form.value.steps
+          .filter(s => s.instruction.trim())
+          .map((s, i) => ({ ...s, stepNumber: i + 1 })),
+      };
+      let savedId;
       if (editingId.value) {
-        await axios.put(`${API}/${editingId.value}`, form.value);
+        await axios.put(`${API}/${editingId.value}`, payload);
+        savedId = editingId.value;
       } else {
-        await axios.post(API, form.value);
+        const res = await axios.post(API, payload);
+        savedId = res.data.id;
+      }
+      if (imageFile.value) {
+        const fd = new FormData();
+        fd.append('file', imageFile.value);
+        await axios.post(`${API}/${savedId}/image`, fd);
+      } else if (removeImage.value) {
+        await axios.delete(`${API}/${savedId}/image`);
       }
       closeForm();
       fetchRecipes();
@@ -401,31 +660,26 @@ createApp({
       fetchRecipes();
     }
 
-    // Ingredient scaling logic
     const scaledIngredients = computed(() => {
-      if (!selected.value?.ingredients) return '';
+      if (!selected.value?.ingredients) return [];
       const original = selected.value.servings || 1;
       const factor   = (scaleTo.value || 1) / original;
       if (factor === 1) return selected.value.ingredients;
-
-      return selected.value.ingredients.split('\n').map(line => {
-        // Try to find a leading number (integer or decimal) and scale it
-        return line.replace(/(\d+(\.\d+)?)/g, (match) => {
-          const scaled = parseFloat(match) * factor;
-          // Display as fraction-friendly rounded number
-          return Number.isInteger(scaled) ? scaled : parseFloat(scaled.toFixed(2));
-        });
-      }).join('\n');
+      return selected.value.ingredients.map(ing => ({
+        ...ing,
+        quantity: ing.quantity != null ? parseFloat((ing.quantity * factor).toFixed(2)) : null,
+      }));
     });
 
-    onMounted(fetchRecipes);
+    onMounted(() => { fetchCategories(); fetchRecipes(); });
 
     return {
-      recipes, search, filterCategory, categories,
-      showForm, editingId, form,
+      recipes, search, filterCategory, availableCategories,
+      showForm, editingId, form, imagePreview,
       showDetail, selected, scaleTo, scaledIngredients,
       fetchRecipes, openCreate, openEdit, closeForm, saveRecipe,
       openDetail, closeDetail, deleteRecipe,
+      onImageSelected, clearImage,
     };
   }
 }).mount('#app');
