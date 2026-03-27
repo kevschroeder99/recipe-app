@@ -1,0 +1,384 @@
+/* =============================================
+   Base
+   ============================================= */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f9f5f0;
+  color: #333;
+  min-height: 100vh;
+}
+
+/* =============================================
+   Layout
+   ============================================= */
+header {
+  background: #c0392b;
+  color: white;
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+header h1 { font-size: 1.6rem; font-weight: 700; }
+
+.container { max-width: 960px; margin: 0 auto; padding: 24px 16px; }
+
+/* =============================================
+   Toolbar
+   ============================================= */
+.toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.toolbar input, .toolbar select {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  flex: 1;
+  min-width: 140px;
+}
+
+/* =============================================
+   Buttons
+   ============================================= */
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.btn:hover        { opacity: 0.85; }
+.btn-primary      { background: #c0392b; color: white; }
+.btn-secondary    { background: #7f8c8d; color: white; }
+.btn-danger       { background: #e74c3c; color: white; }
+.btn-outline      { background: white; border: 1px solid #ccc; color: #333; }
+
+.btn-ghost {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  font-size: 1rem;
+  padding: 2px 6px;
+}
+.btn-ghost:hover { color: #c0392b; }
+
+.btn-add {
+  background: none;
+  border: 1px dashed #ccc;
+  color: #888;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  width: 100%;
+  margin-top: 6px;
+}
+.btn-add:hover { border-color: #c0392b; color: #c0392b; }
+
+/* =============================================
+   Recipe Grid & Cards
+   ============================================= */
+.recipe-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.recipe-card {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.recipe-card:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
+
+.card-image {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.card-image-placeholder {
+  width: 100%;
+  height: 100px;
+  background: linear-gradient(135deg, #fdecea, #f9f5f0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+}
+
+.card-body             { padding: 14px 16px 16px; }
+.recipe-card h3        { font-size: 1.1rem; margin-bottom: 6px; color: #c0392b; }
+.recipe-card .meta {
+  font-size: 0.82rem;
+  color: #888;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* =============================================
+   Badges
+   ============================================= */
+.badge {
+  background: #fdecea;
+  color: #c0392b;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.badge.green { background: #eafaf1; color: #27ae60; }
+.badge.blue  { background: #eaf4fb; color: #2980b9; }
+
+/* =============================================
+   Modal / Overlay
+   ============================================= */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 16px;
+}
+
+.modal {
+  background: white;
+  border-radius: 12px;
+  padding: 28px;
+  width: 100%;
+  max-width: 640px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+.modal h2          { margin-bottom: 20px; color: #c0392b; }
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* =============================================
+   Form
+   ============================================= */
+.form-group              { margin-bottom: 14px; }
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #555;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+
+.form-group textarea { resize: vertical; min-height: 60px; }
+
+.form-row            { display: flex; gap: 12px; }
+.form-row .form-group { flex: 1; }
+
+/* =============================================
+   Categories
+   ============================================= */
+.category-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.category-option {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  user-select: none;
+  transition: all 0.15s;
+}
+.category-option:hover            { border-color: #c0392b; color: #c0392b; }
+.category-option.selected         { background: #fdecea; border-color: #c0392b; color: #c0392b; font-weight: 600; }
+.category-option input            { display: none; }
+
+/* =============================================
+   Ingredients
+   ============================================= */
+.ingredient-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.ingredient-row input  { margin-bottom: 0; }
+.ingredient-row .ing-name { flex: 2; }
+.ingredient-row .ing-qty  { flex: 1; min-width: 70px; }
+.ingredient-row .ing-unit { flex: 1; min-width: 70px; }
+
+/* =============================================
+   Steps
+   ============================================= */
+.step-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.step-num {
+  background: #c0392b;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-top: 8px;
+}
+
+.step-row textarea { flex: 1; margin-bottom: 0; }
+
+/* =============================================
+   Detail View
+   ============================================= */
+.detail-section     { margin-bottom: 18px; }
+.detail-section h4  {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #999;
+  margin-bottom: 8px;
+}
+
+.detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.detail-image {
+  width: 100%;
+  max-height: 280px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 18px;
+}
+
+.ingredient-list     { list-style: none; padding: 0; }
+.ingredient-list li  {
+  padding: 5px 0;
+  border-bottom: 1px solid #f0ece8;
+  font-size: 0.95rem;
+}
+.ingredient-list li:last-child { border-bottom: none; }
+.ingredient-list .qty { color: #c0392b; font-weight: 600; margin-right: 4px; }
+
+.step-list { padding-left: 0; list-style: none; counter-reset: steps; }
+.step-list li {
+  counter-increment: steps;
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+.step-list li::before {
+  content: counter(steps);
+  background: #c0392b;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+/* =============================================
+   Scaling Bar
+   ============================================= */
+.scaling-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fdecea;
+  padding: 10px 16px;
+  border-radius: 8px;
+  margin-bottom: 18px;
+}
+
+.scaling-bar label { font-weight: 600; font-size: 0.9rem; color: #c0392b; }
+.scaling-bar input[type=number] {
+  width: 70px;
+  padding: 6px 8px;
+  border: 1px solid #c0392b;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+/* =============================================
+   Image Upload
+   ============================================= */
+.image-upload-area {
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.image-upload-area:hover { border-color: #c0392b; }
+
+.image-preview {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+/* =============================================
+   Empty State
+   ============================================= */
+.empty-state { text-align: center; color: #aaa; margin-top: 60px; font-size: 1.1rem; }

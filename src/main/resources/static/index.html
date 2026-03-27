@@ -4,330 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Recipe App</title>
+  <link rel="stylesheet" href="/css/styles.css" />
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f9f5f0;
-      color: #333;
-      min-height: 100vh;
-    }
-
-    header {
-      background: #c0392b;
-      color: white;
-      padding: 16px 32px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    header h1 { font-size: 1.6rem; font-weight: 700; }
-
-    .container { max-width: 960px; margin: 0 auto; padding: 24px 16px; }
-
-    .toolbar {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
-
-    .toolbar input, .toolbar select {
-      padding: 8px 12px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 0.95rem;
-      flex: 1;
-      min-width: 140px;
-    }
-
-    .btn {
-      padding: 8px 16px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      font-weight: 600;
-      transition: opacity 0.2s;
-    }
-
-    .btn:hover { opacity: 0.85; }
-    .btn-primary { background: #c0392b; color: white; }
-    .btn-secondary { background: #7f8c8d; color: white; }
-    .btn-danger { background: #e74c3c; color: white; }
-    .btn-outline { background: white; border: 1px solid #ccc; color: #333; }
-    .btn-ghost { background: none; border: none; cursor: pointer; color: #999; font-size: 1rem; padding: 2px 6px; }
-    .btn-ghost:hover { color: #c0392b; }
-    .btn-add { background: none; border: 1px dashed #ccc; color: #888; border-radius: 6px; padding: 6px 12px; cursor: pointer; font-size: 0.85rem; width: 100%; margin-top: 6px; }
-    .btn-add:hover { border-color: #c0392b; color: #c0392b; }
-
-    .recipe-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 16px;
-    }
-
-    .recipe-card {
-      background: white;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.15s;
-    }
-
-    .recipe-card:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
-
-    .card-image {
-      width: 100%;
-      height: 160px;
-      object-fit: cover;
-    }
-
-    .card-image-placeholder {
-      width: 100%;
-      height: 100px;
-      background: linear-gradient(135deg, #fdecea, #f9f5f0);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-    }
-
-    .card-body { padding: 14px 16px 16px; }
-    .recipe-card h3 { font-size: 1.1rem; margin-bottom: 6px; color: #c0392b; }
-
-    .recipe-card .meta {
-      font-size: 0.82rem;
-      color: #888;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .badge {
-      background: #fdecea;
-      color: #c0392b;
-      padding: 2px 8px;
-      border-radius: 12px;
-      font-size: 0.78rem;
-      font-weight: 600;
-    }
-
-    .badge.green { background: #eafaf1; color: #27ae60; }
-    .badge.blue  { background: #eaf4fb; color: #2980b9; }
-
-    .overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.45);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 100;
-      padding: 16px;
-    }
-
-    .modal {
-      background: white;
-      border-radius: 12px;
-      padding: 28px;
-      width: 100%;
-      max-width: 640px;
-      max-height: 90vh;
-      overflow-y: auto;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-    }
-
-    .modal h2 { margin-bottom: 20px; color: #c0392b; }
-
-    .form-group { margin-bottom: 14px; }
-
-    .form-group label {
-      display: block;
-      font-size: 0.85rem;
-      font-weight: 600;
-      margin-bottom: 4px;
-      color: #555;
-    }
-
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      width: 100%;
-      padding: 8px 10px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 0.95rem;
-      font-family: inherit;
-    }
-
-    .form-group textarea { resize: vertical; min-height: 60px; }
-
-    .form-row { display: flex; gap: 12px; }
-    .form-row .form-group { flex: 1; }
-
-    .modal-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      margin-top: 20px;
-    }
-
-    /* Category checkboxes */
-    .category-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .category-option {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      padding: 4px 10px;
-      border: 1px solid #ddd;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      user-select: none;
-      transition: all 0.15s;
-    }
-
-    .category-option:hover { border-color: #c0392b; color: #c0392b; }
-    .category-option.selected { background: #fdecea; border-color: #c0392b; color: #c0392b; font-weight: 600; }
-    .category-option input { display: none; }
-
-    /* Ingredient rows */
-    .ingredient-row {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-
-    .ingredient-row input { margin-bottom: 0; }
-    .ingredient-row .ing-name { flex: 2; }
-    .ingredient-row .ing-qty  { flex: 1; min-width: 70px; }
-    .ingredient-row .ing-unit { flex: 1; min-width: 70px; }
-
-    /* Step rows */
-    .step-row {
-      display: flex;
-      gap: 8px;
-      align-items: flex-start;
-      margin-bottom: 8px;
-    }
-
-    .step-num {
-      background: #c0392b;
-      color: white;
-      border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      min-width: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
-      font-weight: 700;
-      margin-top: 8px;
-    }
-
-    .step-row textarea { flex: 1; margin-bottom: 0; }
-
-    /* Detail view */
-    .detail-section { margin-bottom: 18px; }
-    .detail-section h4 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: #999; margin-bottom: 8px; }
-
-    .detail-meta {
-      display: flex; flex-wrap: wrap; gap: 10px;
-      margin-bottom: 18px;
-    }
-
-    .ingredient-list { list-style: none; padding: 0; }
-    .ingredient-list li {
-      padding: 5px 0;
-      border-bottom: 1px solid #f0ece8;
-      font-size: 0.95rem;
-    }
-    .ingredient-list li:last-child { border-bottom: none; }
-    .ingredient-list .qty { color: #c0392b; font-weight: 600; margin-right: 4px; }
-
-    .step-list { padding-left: 0; list-style: none; counter-reset: steps; }
-    .step-list li {
-      counter-increment: steps;
-      display: flex;
-      gap: 12px;
-      margin-bottom: 12px;
-      line-height: 1.6;
-    }
-    .step-list li::before {
-      content: counter(steps);
-      background: #c0392b;
-      color: white;
-      border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      min-width: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
-      font-weight: 700;
-      margin-top: 2px;
-    }
-
-    .scaling-bar {
-      display: flex; align-items: center; gap: 12px;
-      background: #fdecea; padding: 10px 16px; border-radius: 8px;
-      margin-bottom: 18px;
-    }
-
-    .scaling-bar label { font-weight: 600; font-size: 0.9rem; color: #c0392b; }
-    .scaling-bar input[type=number] {
-      width: 70px; padding: 6px 8px;
-      border: 1px solid #c0392b; border-radius: 6px;
-      font-size: 0.95rem; text-align: center;
-    }
-
-    /* Image upload */
-    .image-upload-area {
-      border: 2px dashed #ddd;
-      border-radius: 8px;
-      padding: 16px;
-      text-align: center;
-      cursor: pointer;
-      transition: border-color 0.2s;
-    }
-
-    .image-upload-area:hover { border-color: #c0392b; }
-
-    .image-preview {
-      width: 100%;
-      max-height: 200px;
-      object-fit: cover;
-      border-radius: 6px;
-      margin-bottom: 8px;
-    }
-
-    .detail-image {
-      width: 100%;
-      max-height: 280px;
-      object-fit: cover;
-      border-radius: 8px;
-      margin-bottom: 18px;
-    }
-
-    .empty-state { text-align: center; color: #aaa; margin-top: 60px; font-size: 1.1rem; }
-  </style>
 </head>
 <body>
 
 <div id="app">
 
+  <!-- ============================================
+       Header
+       ============================================ -->
   <header>
     <span style="font-size:1.8rem">🍽️</span>
     <h1>My Recipe Book</h1>
@@ -335,6 +22,9 @@
 
   <div class="container">
 
+    <!-- ============================================
+         Toolbar
+         ============================================ -->
     <div class="toolbar">
       <input v-model="search" placeholder="Search recipes..." @input="fetchRecipes" />
       <select v-model="filterCategory" @change="fetchRecipes">
@@ -344,10 +34,15 @@
       <button class="btn btn-primary" @click="openCreate">+ New Recipe</button>
     </div>
 
+    <!-- ============================================
+         Recipe Grid
+         ============================================ -->
     <div v-if="recipes.length" class="recipe-grid">
       <div v-for="recipe in recipes" :key="recipe.id" class="recipe-card" @click="openDetail(recipe)">
+
         <img v-if="recipe.imageUrl" :src="recipe.imageUrl" class="card-image" :alt="recipe.name" />
         <div v-else class="card-image-placeholder">🍽️</div>
+
         <div class="card-body">
           <h3>{{ recipe.name }}</h3>
           <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;">
@@ -360,17 +55,21 @@
             <span v-if="recipe.servings">🍴 {{ recipe.servings }} servings</span>
           </div>
         </div>
+
       </div>
     </div>
     <div v-else class="empty-state">No recipes yet. Add your first one!</div>
 
   </div>
 
-  <!-- Create / Edit Modal -->
+  <!-- ============================================
+       Create / Edit Modal
+       ============================================ -->
   <div v-if="showForm" class="overlay" @click.self="closeForm">
     <div class="modal">
       <h2>{{ editingId ? 'Edit Recipe' : 'New Recipe' }}</h2>
 
+      <!-- Basic info -->
       <div class="form-group">
         <label>Name *</label>
         <input v-model="form.name" placeholder="Recipe name" />
@@ -381,6 +80,7 @@
         <textarea v-model="form.description" rows="2" placeholder="Short description..."></textarea>
       </div>
 
+      <!-- Difficulty & Servings -->
       <div class="form-row">
         <div class="form-group">
           <label>Difficulty</label>
@@ -397,6 +97,7 @@
         </div>
       </div>
 
+      <!-- Times -->
       <div class="form-row">
         <div class="form-group">
           <label>Prep Time (min)</label>
@@ -408,6 +109,7 @@
         </div>
       </div>
 
+      <!-- Categories -->
       <div class="form-group">
         <label>Categories</label>
         <div class="category-grid">
@@ -423,17 +125,19 @@
         </div>
       </div>
 
+      <!-- Ingredients -->
       <div class="form-group">
         <label>Ingredients</label>
         <div v-for="(ing, i) in form.ingredients" :key="i" class="ingredient-row">
           <input class="ing-name" v-model="ing.name" placeholder="Ingredient name" />
-          <input class="ing-qty" v-model.number="ing.quantity" type="number" min="0" step="0.1" placeholder="Qty" />
+          <input class="ing-qty"  v-model.number="ing.quantity" type="number" min="0" step="0.1" placeholder="Qty" />
           <input class="ing-unit" v-model="ing.unit" placeholder="Unit" />
           <button class="btn-ghost" @click="form.ingredients.splice(i, 1)">×</button>
         </div>
         <button class="btn-add" @click="form.ingredients.push({ name: '', quantity: null, unit: '' })">+ Add ingredient</button>
       </div>
 
+      <!-- Steps -->
       <div class="form-group">
         <label>Steps</label>
         <div v-for="(step, i) in form.steps" :key="i" class="step-row">
@@ -444,51 +148,58 @@
         <button class="btn-add" @click="form.steps.push({ instruction: '' })">+ Add step</button>
       </div>
 
+      <!-- Image -->
       <div class="form-group">
         <label>Image</label>
         <div class="image-upload-area" @click="$refs.imageInput.click()">
-          <img v-if="imagePreview" :src="imagePreview" class="image-preview" alt="Preview" />
+          <img v-if="imagePreview"            :src="imagePreview"            class="image-preview" alt="Preview" />
           <img v-else-if="form.existingImageUrl" :src="form.existingImageUrl" class="image-preview" alt="Current image" />
           <div v-else style="color:#aaa; font-size:0.9rem; padding:8px">
             Click to upload an image (JPG or PNG)
           </div>
         </div>
         <input ref="imageInput" type="file" accept="image/jpeg,image/png" style="display:none" @change="onImageSelected" />
-        <button v-if="imagePreview || form.existingImageUrl" class="btn-ghost" style="margin-top:6px; font-size:0.8rem" @click.prevent="clearImage">Remove image</button>
+        <button v-if="imagePreview || form.existingImageUrl" class="btn-ghost" style="margin-top:6px; font-size:0.8rem" @click.prevent="clearImage">
+          Remove image
+        </button>
       </div>
 
       <div class="modal-actions">
-        <button class="btn btn-outline" @click="closeForm">Cancel</button>
-        <button class="btn btn-primary" @click="saveRecipe">{{ editingId ? 'Update' : 'Save' }}</button>
+        <button class="btn btn-outline"  @click="closeForm">Cancel</button>
+        <button class="btn btn-primary"  @click="saveRecipe">{{ editingId ? 'Update' : 'Save' }}</button>
       </div>
     </div>
   </div>
 
-  <!-- Detail Modal -->
+  <!-- ============================================
+       Detail Modal
+       ============================================ -->
   <div v-if="showDetail && selected" class="overlay" @click.self="closeDetail">
     <div class="modal">
       <h2>{{ selected.name }}</h2>
 
       <img v-if="selected.imageUrl" :src="selected.imageUrl" class="detail-image" :alt="selected.name" />
 
+      <!-- Meta badges -->
       <div class="detail-meta">
         <span v-for="cat in selected.categories" :key="cat" class="badge">{{ cat }}</span>
         <span v-if="selected.difficulty" class="badge green">{{ selected.difficulty }}</span>
-        <span v-if="selected.prepTime" class="badge blue">⏱ {{ selected.prepTime }} min prep</span>
-        <span v-if="selected.cookTime" class="badge blue">🔥 {{ selected.cookTime }} min cook</span>
-        <span v-if="selected.servings" class="badge blue">🍴 {{ selected.servings }} servings</span>
+        <span v-if="selected.prepTime"   class="badge blue">⏱ {{ selected.prepTime }} min prep</span>
+        <span v-if="selected.cookTime"   class="badge blue">🔥 {{ selected.cookTime }} min cook</span>
+        <span v-if="selected.servings"   class="badge blue">🍴 {{ selected.servings }} servings</span>
       </div>
 
+      <!-- Description -->
       <div v-if="selected.description" class="detail-section">
         <p style="color:#555; line-height:1.6">{{ selected.description }}</p>
       </div>
 
+      <!-- Ingredients -->
       <div v-if="selected.ingredients?.length" class="detail-section">
         <h4>Ingredients</h4>
         <div v-if="selected.servings" class="scaling-bar">
-          <label>Scale to</label>
-          <input type="number" v-model.number="scaleTo" min="1" />
-          <span style="font-size:0.85rem; color:#888">servings (original: {{ selected.servings }})</span>
+          <label>Servings</label>
+          <input type="number" v-model.number="scaleTo" min="0.5" step="0.5" autocomplete="off" />
         </div>
         <ul class="ingredient-list">
           <li v-for="ing in scaledIngredients" :key="ing.id">
@@ -498,6 +209,7 @@
         </ul>
       </div>
 
+      <!-- Steps -->
       <div v-if="selected.steps?.length" class="detail-section">
         <h4>Instructions</h4>
         <ul class="step-list">
@@ -506,183 +218,15 @@
       </div>
 
       <div class="modal-actions">
-        <button class="btn btn-danger" @click="deleteRecipe(selected.id)">Delete</button>
+        <button class="btn btn-danger"    @click="deleteRecipe(selected.id)">Delete</button>
         <button class="btn btn-secondary" @click="openEdit(selected)">Edit</button>
-        <button class="btn btn-outline" @click="closeDetail">Close</button>
+        <button class="btn btn-outline"   @click="closeDetail">Close</button>
       </div>
     </div>
   </div>
 
 </div>
 
-<script>
-const { createApp, ref, computed, onMounted } = Vue;
-
-const API = '/api/recipes';
-
-createApp({
-  setup() {
-    const recipes            = ref([]);
-    const search             = ref('');
-    const filterCategory     = ref('');
-    const availableCategories = ref([]);
-
-    const showForm    = ref(false);
-    const editingId   = ref(null);
-    const form        = ref(emptyForm());
-    const imageFile   = ref(null);
-    const imagePreview = ref(null);
-    const removeImage  = ref(false);
-
-    const showDetail = ref(false);
-    const selected   = ref(null);
-    const scaleTo    = ref(1);
-
-    function emptyForm() {
-      return {
-        name: '',
-        description: '',
-        difficulty: '',
-        servings: null,
-        prepTime: null,
-        cookTime: null,
-        categories: [],
-        ingredients: [{ name: '', quantity: null, unit: '' }],
-        steps: [{ instruction: '' }],
-        existingImageUrl: null,
-      };
-    }
-
-    function onImageSelected(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      imageFile.value = file;
-      removeImage.value = false;
-      imagePreview.value = URL.createObjectURL(file);
-    }
-
-    function clearImage() {
-      imageFile.value = null;
-      imagePreview.value = null;
-      removeImage.value = true;
-      form.value.existingImageUrl = null;
-    }
-
-    async function fetchCategories() {
-      const res = await axios.get('/api/categories');
-      availableCategories.value = res.data;
-    }
-
-    async function fetchRecipes() {
-      const params = {};
-      if (search.value)         params.search   = search.value;
-      if (filterCategory.value) params.category = filterCategory.value;
-      const res = await axios.get(API, { params });
-      recipes.value = res.data;
-    }
-
-    function openCreate() {
-      editingId.value = null;
-      form.value = emptyForm();
-      imageFile.value = null;
-      imagePreview.value = null;
-      removeImage.value = false;
-      showForm.value = true;
-    }
-
-    function openEdit(recipe) {
-      editingId.value = recipe.id;
-      form.value = {
-        name:             recipe.name,
-        description:      recipe.description || '',
-        difficulty:       recipe.difficulty  || '',
-        servings:         recipe.servings,
-        prepTime:         recipe.prepTime,
-        cookTime:         recipe.cookTime,
-        categories:       [...(recipe.categories || [])],
-        ingredients:      recipe.ingredients?.map(i => ({ name: i.name, quantity: i.quantity, unit: i.unit || '' })) || [],
-        steps:            recipe.steps?.map(s => ({ instruction: s.instruction })) || [],
-        existingImageUrl: recipe.imageUrl || null,
-      };
-      imageFile.value = null;
-      imagePreview.value = null;
-      removeImage.value = false;
-      showDetail.value = false;
-      showForm.value = true;
-    }
-
-    function closeForm() {
-      showForm.value = false;
-      imageFile.value = null;
-      imagePreview.value = null;
-    }
-
-    async function saveRecipe() {
-      if (!form.value.name.trim()) { alert('Recipe name is required.'); return; }
-      const payload = {
-        ...form.value,
-        ingredients: form.value.ingredients.filter(i => i.name.trim()),
-        steps: form.value.steps
-          .filter(s => s.instruction.trim())
-          .map((s, i) => ({ ...s, stepNumber: i + 1 })),
-      };
-      let savedId;
-      if (editingId.value) {
-        await axios.put(`${API}/${editingId.value}`, payload);
-        savedId = editingId.value;
-      } else {
-        const res = await axios.post(API, payload);
-        savedId = res.data.id;
-      }
-      if (imageFile.value) {
-        const fd = new FormData();
-        fd.append('file', imageFile.value);
-        await axios.post(`${API}/${savedId}/image`, fd);
-      } else if (removeImage.value) {
-        await axios.delete(`${API}/${savedId}/image`);
-      }
-      closeForm();
-      fetchRecipes();
-    }
-
-    function openDetail(recipe) {
-      selected.value = recipe;
-      scaleTo.value  = recipe.servings || 1;
-      showDetail.value = true;
-    }
-
-    function closeDetail() { showDetail.value = false; selected.value = null; }
-
-    async function deleteRecipe(id) {
-      if (!confirm('Delete this recipe?')) return;
-      await axios.delete(`${API}/${id}`);
-      closeDetail();
-      fetchRecipes();
-    }
-
-    const scaledIngredients = computed(() => {
-      if (!selected.value?.ingredients) return [];
-      const original = selected.value.servings || 1;
-      const factor   = (scaleTo.value || 1) / original;
-      if (factor === 1) return selected.value.ingredients;
-      return selected.value.ingredients.map(ing => ({
-        ...ing,
-        quantity: ing.quantity != null ? parseFloat((ing.quantity * factor).toFixed(2)) : null,
-      }));
-    });
-
-    onMounted(() => { fetchCategories(); fetchRecipes(); });
-
-    return {
-      recipes, search, filterCategory, availableCategories,
-      showForm, editingId, form, imagePreview,
-      showDetail, selected, scaleTo, scaledIngredients,
-      fetchRecipes, openCreate, openEdit, closeForm, saveRecipe,
-      openDetail, closeDetail, deleteRecipe,
-      onImageSelected, clearImage,
-    };
-  }
-}).mount('#app');
-</script>
+<script src="/js/app.js"></script>
 </body>
 </html>
