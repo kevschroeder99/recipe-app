@@ -79,70 +79,73 @@ public class RecipeService {
     }
 
     private void applyRequest(Recipe recipe, RecipeRequest req) {
-        recipe.setName(req.getName());
-        recipe.setDescription(req.getDescription());
-        recipe.setDifficulty(req.getDifficulty());
-        recipe.setServings(req.getServings());
-        recipe.setPrepTime(req.getPrepTime());
-        recipe.setCookTime(req.getCookTime());
+        recipe.setName(req.name());
+        recipe.setDescription(req.description());
+        recipe.setDifficulty(req.difficulty());
+        recipe.setServings(req.servings());
+        recipe.setPrepTime(req.prepTime());
+        recipe.setCookTime(req.cookTime());
 
-        if (req.getSteps() != null) {
-            for (RecipeRequest.StepDto s : req.getSteps()) {
+        if (req.steps() != null) {
+            for (RecipeRequest.Step s : req.steps()) {
                 Step step = new Step();
                 step.setRecipe(recipe);
-                step.setStepNumber(s.getStepNumber());
-                step.setInstruction(s.getInstruction());
+                step.setStepNumber(s.stepNumber());
+                step.setInstruction(s.instruction());
                 recipe.getSteps().add(step);
             }
         }
 
-        if (req.getIngredients() != null) {
-            for (RecipeRequest.IngredientDto i : req.getIngredients()) {
-                Ingredient ingredient = ingredientRepository.findByNameIgnoreCase(i.getName())
-                        .orElseGet(() -> ingredientRepository.save(new Ingredient(i.getName())));
+        if (req.ingredients() != null) {
+            for (RecipeRequest.Ingredient i : req.ingredients()) {
+                Ingredient ingredient = ingredientRepository.findByNameIgnoreCase(i.name())
+                        .orElseGet(() -> ingredientRepository.save(new Ingredient(i.name())));
                 RecipeIngredient ri = new RecipeIngredient();
                 ri.setRecipe(recipe);
                 ri.setIngredient(ingredient);
-                ri.setQuantity(i.getQuantity());
-                ri.setUnit(i.getUnit());
+                ri.setQuantity(i.quantity());
+                ri.setUnit(i.unit());
                 recipe.getRecipeIngredients().add(ri);
             }
         }
 
-        if (req.getCategories() != null) {
-            recipe.getCategories().addAll(req.getCategories());
+        if (req.categories() != null) {
+            recipe.getCategories().addAll(req.categories());
         }
     }
 
     private RecipeResponse toResponse(Recipe recipe) {
-        RecipeResponse res = new RecipeResponse();
-        res.setId(recipe.getId());
-        res.setName(recipe.getName());
-        res.setDescription(recipe.getDescription());
-        res.setDifficulty(recipe.getDifficulty());
-        res.setServings(recipe.getServings());
-        res.setPrepTime(recipe.getPrepTime());
-        res.setCookTime(recipe.getCookTime());
-        res.setImageUrl(recipe.getImageFilename() != null ? "/api/recipes/" + recipe.getId() + "/image" : null);
-        res.setCategories(recipe.getCategories());
+        return new RecipeResponse(
+                recipe.getId(),
+                recipe.getName(),
+                recipe.getDescription(),
+                recipe.getDifficulty(),
+                recipe.getServings(),
+                recipe.getPrepTime(),
+                recipe.getCookTime(),
+                recipe.getImageFilename() != null ? "/api/recipes/" + recipe.getId() + "/image" : null,
+                recipe.getCategories(),
+                createIngredients(recipe),
+                createSteps(recipe)
+                );
+    }
 
-        res.setIngredients(recipe.getRecipeIngredients().stream().map(ri -> {
-            RecipeResponse.IngredientDto dto = new RecipeResponse.IngredientDto();
-            dto.setId(ri.getId());
-            dto.setName(ri.getIngredient().getName());
-            dto.setQuantity(ri.getQuantity());
-            dto.setUnit(ri.getUnit());
-            return dto;
-        }).toList());
+    private List<RecipeResponse.Step> createSteps(Recipe recipe){
+       return recipe.getSteps().stream().map(s ->
+               new RecipeResponse.Step(
+                       s.getId(),
+                       s.getStepNumber(),
+                       s.getInstruction()))
+               .toList();
+    }
 
-        res.setSteps(recipe.getSteps().stream().map(s -> {
-            RecipeResponse.StepDto dto = new RecipeResponse.StepDto();
-            dto.setId(s.getId());
-            dto.setStepNumber(s.getStepNumber());
-            dto.setInstruction(s.getInstruction());
-            return dto;
-        }).toList());
-
-        return res;
+    private List<RecipeResponse.Ingredient> createIngredients(Recipe recipe) {
+        return recipe.getRecipeIngredients().stream().map(ri ->
+                new RecipeResponse.Ingredient(
+                        ri.getId(),
+                        ri.getIngredient().getName(),
+                        ri.getQuantity(),
+                        ri.getUnit()))
+                .toList();
     }
 }

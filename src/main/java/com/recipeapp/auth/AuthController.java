@@ -25,6 +25,7 @@ public class AuthController {
         if (adminPassword.equals(password)) {
             return ResponseEntity.ok(Map.of("token", tokenStore.createToken()));
         }
+
         return ResponseEntity.status(401).body(Map.of("error", "Invalid password"));
     }
 
@@ -33,6 +34,7 @@ public class AuthController {
         if (auth != null && auth.startsWith("Bearer ")) {
             tokenStore.removeToken(auth.substring(7));
         }
+
         return ResponseEntity.ok().build();
     }
 }

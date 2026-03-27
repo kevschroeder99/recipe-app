@@ -18,7 +18,8 @@ public class Recipe {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    private String difficulty;
+    @Enumerated(EnumType.STRING)
+    private Difficulty difficulty;
     private Integer servings;
     private Integer prepTime;
     private Integer cookTime;
@@ -46,8 +47,8 @@ public class Recipe {
     public void setName(String name) { this.name = name; }
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
-    public String getDifficulty() { return difficulty; }
-    public void setDifficulty(String difficulty) { this.difficulty = difficulty; }
+    public Difficulty getDifficulty() { return difficulty; }
+    public void setDifficulty(Difficulty difficulty) { this.difficulty = difficulty; }
     public Integer getServings() { return servings; }
     public void setServings(Integer servings) { this.servings = servings; }
     public Integer getPrepTime() { return prepTime; }

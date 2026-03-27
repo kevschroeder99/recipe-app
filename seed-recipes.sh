@@ -1,16 +1,31 @@
 #!/bin/bash
 
 # Usage:
-#   Local:      ./seed-recipes.sh
-#   Production: ./seed-recipes.sh https://recipe-app-production-9416.up.railway.app
+#   Local:      ./seed-recipes.sh <password>
+#   Production: ./seed-recipes.sh <password> https://recipe-app-production-9416.up.railway.app
 
-BASE_URL="${1:-http://localhost:8080}"
+PASSWORD="${1:-changeme}"
+BASE_URL="${2:-http://localhost:8080}"
 API="$BASE_URL/api/recipes"
+
+# Login and get token
+echo "Logging in..."
+TOKEN=$(curl -s -X POST "$BASE_URL/api/auth/login" \
+  -H "Content-Type: application/json" \
+  -d "{\"password\": \"$PASSWORD\"}" | sed 's/.*"token":"\([^"]*\)".*/\1/')
+
+if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
+  echo "Login failed. Check your password."
+  exit 1
+fi
+
+echo "Login successful."
 
 post() {
   curl -s -o /dev/null -w "%{http_code}" \
     -X POST "$API" \
     -H "Content-Type: application/json" \
+    -H "Authorization: Bearer $TOKEN" \
     -d "$1"
 }
 
