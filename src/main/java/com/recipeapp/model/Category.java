@@ -9,10 +9,6 @@ public enum Category {
     LUNCH("Lunch"),
     DINNER("Dinner"),
     DESSERT("Dessert"),
-    SNACK("Snack"),
-    SOUP("Soup"),
-    SALAD("Salad"),
-    PASTA("Pasta"),
     BAKING("Baking"),
     OTHER("Other");
 

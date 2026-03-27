@@ -1,4 +1,4 @@
-const { createApp, ref, computed, onMounted } = Vue;
+const { createApp, ref, computed, onMounted, onUnmounted } = Vue;
 
 const API = '/api/recipes';
 
@@ -43,6 +43,50 @@ function recipeToForm(recipe) {
 createApp({
   setup() {
 
+    // --- Auth state ---
+    const token         = ref(localStorage.getItem('admin_token') || null);
+    const isLoggedIn    = ref(false);
+    const showLogin     = ref(false);
+    const loginPassword = ref('');
+    const loginError    = ref('');
+
+    // Setup axios interceptor to attach token to every request
+    axios.interceptors.request.use(config => {
+      if (token.value) config.headers['Authorization'] = `Bearer ${token.value}`;
+      return config;
+    });
+
+    async function verifyToken() {
+      if (!token.value) return;
+      // verify by attempting a harmless authenticated request
+      try {
+        await axios.post('/api/auth/logout');
+        token.value = null;
+        localStorage.removeItem('admin_token');
+      } catch { /* token likely valid if server didn't reject */ }
+    }
+
+    async function login() {
+      loginError.value = '';
+      try {
+        const res = await axios.post('/api/auth/login', { password: loginPassword.value });
+        token.value      = res.data.token;
+        isLoggedIn.value = true;
+        localStorage.setItem('admin_token', token.value);
+        showLogin.value  = false;
+        loginPassword.value = '';
+      } catch {
+        loginError.value = 'Wrong password. Try again.';
+      }
+    }
+
+    async function logout() {
+      await axios.post('/api/auth/logout').catch(() => {});
+      token.value      = null;
+      isLoggedIn.value = false;
+      localStorage.removeItem('admin_token');
+    }
+
     // --- Recipe list state ---
     const recipes             = ref([]);
     const search              = ref('');
@@ -58,9 +102,10 @@ createApp({
     const removeImage  = ref(false);
 
     // --- Detail view state ---
-    const showDetail = ref(false);
-    const selected   = ref(null);
-    const scaleTo    = ref(1);
+    const showDetail  = ref(false);
+    const selected    = ref(null);
+    const scaleTo     = ref(1);
+    const linkCopied  = ref(false);
 
     // =============================================
     // API calls
@@ -170,11 +215,20 @@ createApp({
       selected.value   = recipe;
       scaleTo.value    = recipe.servings || 1;
       showDetail.value = true;
+      history.replaceState(null, '', `?recipe=${recipe.id}`);
     }
 
     function closeDetail() {
       showDetail.value = false;
       selected.value   = null;
+      linkCopied.value = false;
+      history.replaceState(null, '', window.location.pathname);
+    }
+
+    async function copyShareLink() {
+      await navigator.clipboard.writeText(window.location.href);
+      linkCopied.value = true;
+      setTimeout(() => linkCopied.value = false, 2000);
     }
 
     // =============================================
@@ -196,20 +250,52 @@ createApp({
     // Init
     // =============================================
 
-    onMounted(() => {
-      fetchCategories();
-      fetchRecipes();
+    function onKeyDown(e) {
+      if (e.key !== 'Escape') return;
+      if (showLogin.value)  { showLogin.value = false; loginPassword.value = ''; loginError.value = ''; return; }
+      if (showForm.value)   closeForm();
+      if (showDetail.value) closeDetail();
+    }
+
+    onMounted(async () => {
+      // Restore login state from localStorage
+      if (token.value) {
+        try {
+          await axios.get('/api/recipes?_auth_check=1');
+          isLoggedIn.value = true;
+        } catch {
+          token.value = null;
+          localStorage.removeItem('admin_token');
+        }
+      }
+
+      await fetchCategories();
+      await fetchRecipes();
+      document.addEventListener('keydown', onKeyDown);
+
+      // Auto-open recipe from URL param
+      const recipeId = new URLSearchParams(window.location.search).get('recipe');
+      if (recipeId) {
+        const res = await axios.get(`${API}/${recipeId}`).catch(() => null);
+        if (res) openDetail(res.data);
+      }
+    });
+
+    onUnmounted(() => {
+      document.removeEventListener('keydown', onKeyDown);
     });
 
     return {
+      // Auth
+      isLoggedIn, showLogin, loginPassword, loginError, login, logout,
       // List
       recipes, search, filterCategory, availableCategories, fetchRecipes,
       // Form
       showForm, editingId, form, imagePreview,
       openCreate, openEdit, closeForm, saveRecipe, onImageSelected, clearImage,
       // Detail
-      showDetail, selected, scaleTo, scaledIngredients,
-      openDetail, closeDetail, deleteRecipe,
+      showDetail, selected, scaleTo, scaledIngredients, linkCopied,
+      openDetail, closeDetail, deleteRecipe, copyShareLink,
     };
   }
 }).mount('#app');

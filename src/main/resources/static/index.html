@@ -16,8 +16,11 @@
        Header
        ============================================ -->
   <header>
-    <span style="font-size:1.8rem">🍽️</span>
-    <h1>My Recipe Book</h1>
+    <h1>Kevs Recipe Book</h1>
+    <div class="header-auth">
+      <button v-if="!isLoggedIn" class="auth-btn" @click="showLogin = true" title="Admin login">🔒</button>
+      <button v-else class="auth-btn auth-btn-active" @click="logout" title="Logout">🔓</button>
+    </div>
   </header>
 
   <div class="container">
@@ -31,7 +34,7 @@
         <option value="">All categories</option>
         <option v-for="cat in availableCategories" :key="cat" :value="cat">{{ cat }}</option>
       </select>
-      <button class="btn btn-primary" @click="openCreate">+ New Recipe</button>
+      <button v-if="isLoggedIn" class="btn btn-primary" @click="openCreate">+ New Recipe</button>
     </div>
 
     <!-- ============================================
@@ -44,14 +47,13 @@
         <div v-else class="card-image-placeholder">🍽️</div>
 
         <div class="card-body">
+          <div v-if="recipe.categories?.length" class="card-category">{{ recipe.categories.join(' · ') }}</div>
           <h3>{{ recipe.name }}</h3>
-          <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;">
-            <span v-for="cat in recipe.categories" :key="cat" class="badge">{{ cat }}</span>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
             <span v-if="recipe.difficulty" class="badge green">{{ recipe.difficulty }}</span>
           </div>
           <div class="meta">
-            <span v-if="recipe.prepTime">⏱ {{ recipe.prepTime }} min prep</span>
-            <span v-if="recipe.cookTime">🔥 {{ recipe.cookTime }} min cook</span>
+            <span v-if="recipe.prepTime || recipe.cookTime">⏱ {{ (recipe.prepTime || 0) + (recipe.cookTime || 0) }} min</span>
             <span v-if="recipe.servings">🍴 {{ recipe.servings }} servings</span>
           </div>
         </div>
@@ -67,7 +69,15 @@
        ============================================ -->
   <div v-if="showForm" class="overlay" @click.self="closeForm">
     <div class="modal">
-      <h2>{{ editingId ? 'Edit Recipe' : 'New Recipe' }}</h2>
+      <div class="modal-header">
+        <h2>{{ editingId ? 'Edit Recipe' : 'New Recipe' }}</h2>
+        <div class="modal-header-actions">
+          <button class="modal-icon-btn save-btn" @click="saveRecipe" :title="editingId ? 'Update' : 'Save'">✓</button>
+          <button class="modal-icon-btn" @click="closeForm" title="Cancel">✕</button>
+        </div>
+      </div>
+
+      <div class="modal-body">
 
       <!-- Basic info -->
       <div class="form-group">
@@ -129,12 +139,12 @@
       <div class="form-group">
         <label>Ingredients</label>
         <div v-for="(ing, i) in form.ingredients" :key="i" class="ingredient-row">
-          <input class="ing-name" v-model="ing.name" placeholder="Ingredient name" />
           <input class="ing-qty"  v-model.number="ing.quantity" type="number" min="0" step="0.1" placeholder="Qty" />
           <input class="ing-unit" v-model="ing.unit" placeholder="Unit" />
+          <input class="ing-name" v-model="ing.name" placeholder="Ingredient name" />
           <button class="btn-ghost" @click="form.ingredients.splice(i, 1)">×</button>
         </div>
-        <button class="btn-add" @click="form.ingredients.push({ name: '', quantity: null, unit: '' })">+ Add ingredient</button>
+        <button class="btn-add" @click="form.ingredients.push({ quantity: null, unit: '', name: '' })">+ Add ingredient</button>
       </div>
 
       <!-- Steps -->
@@ -164,10 +174,8 @@
         </button>
       </div>
 
-      <div class="modal-actions">
-        <button class="btn btn-outline"  @click="closeForm">Cancel</button>
-        <button class="btn btn-primary"  @click="saveRecipe">{{ editingId ? 'Update' : 'Save' }}</button>
-      </div>
+
+      </div><!-- end modal-body -->
     </div>
   </div>
 
@@ -176,7 +184,18 @@
        ============================================ -->
   <div v-if="showDetail && selected" class="overlay" @click.self="closeDetail">
     <div class="modal">
-      <h2>{{ selected.name }}</h2>
+
+      <div class="modal-header">
+        <h2 class="detail-title">{{ selected.name }}</h2>
+        <div class="modal-header-actions">
+          <button v-if="isLoggedIn" class="modal-icon-btn delete-btn" @click="deleteRecipe(selected.id)" title="Delete">🗑</button>
+          <button v-if="isLoggedIn" class="modal-icon-btn" @click="openEdit(selected)" title="Edit">✏️</button>
+          <button class="modal-icon-btn" @click="copyShareLink" :title="linkCopied ? 'Copied!' : 'Share'">{{ linkCopied ? '✓' : '🔗' }}</button>
+          <button class="modal-icon-btn" @click="closeDetail" title="Close">✕</button>
+        </div>
+      </div>
+
+      <div class="modal-body">
 
       <img v-if="selected.imageUrl" :src="selected.imageUrl" class="detail-image" :alt="selected.name" />
 
@@ -217,15 +236,44 @@
         </ul>
       </div>
 
-      <div class="modal-actions">
-        <button class="btn btn-danger"    @click="deleteRecipe(selected.id)">Delete</button>
-        <button class="btn btn-secondary" @click="openEdit(selected)">Edit</button>
-        <button class="btn btn-outline"   @click="closeDetail">Close</button>
+
+      </div><!-- end modal-body -->
+    </div>
+  </div>
+
+  <!-- ============================================
+       Login Modal
+       ============================================ -->
+  <div v-if="showLogin" class="overlay" @click.self="showLogin = false">
+    <div class="modal login-modal">
+      <div class="modal-header">
+        <h2>Admin Login</h2>
+        <div class="modal-header-actions">
+          <button class="modal-icon-btn" @click="showLogin = false">✕</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Password</label>
+          <input
+            type="password"
+            v-model="loginPassword"
+            placeholder="Enter admin password"
+            @keyup.enter="login"
+            autofocus
+          />
+        </div>
+        <p v-if="loginError" class="login-error">{{ loginError }}</p>
+        <button class="btn btn-primary" style="width:100%; margin-top:8px" @click="login">Login</button>
       </div>
     </div>
   </div>
 
 </div>
+
+<footer>
+  Made with ❤️ by Claude &amp; Kev
+</footer>
 
 <script src="/js/app.js"></script>
 </body>

@@ -24,7 +24,7 @@ STATUS=$(post '{
   "servings": 4,
   "prepTime": 10,
   "cookTime": 20,
-  "categories": ["Pasta", "Dinner"],
+  "categories": ["Dinner"],
   "ingredients": [
     { "name": "Spaghetti",         "quantity": 400,  "unit": "g"   },
     { "name": "Pancetta",          "quantity": 150,  "unit": "g"   },
@@ -76,7 +76,7 @@ STATUS=$(post '{
   "servings": 4,
   "prepTime": 15,
   "cookTime": 10,
-  "categories": ["Salad", "Lunch"],
+  "categories": ["Lunch"],
   "ingredients": [
     { "name": "Romaine lettuce",   "quantity": 1,    "unit": "head"  },
     { "name": "Parmesan",          "quantity": 50,   "unit": "g"     },
@@ -135,7 +135,7 @@ STATUS=$(post '{
   "servings": 4,
   "prepTime": 10,
   "cookTime": 40,
-  "categories": ["Soup", "Lunch"],
+  "categories": ["Lunch"],
   "ingredients": [
     { "name": "Tomatoes",          "quantity": 1000, "unit": "g"   },
     { "name": "Onion",             "quantity": 1,    "unit": ""    },
@@ -218,7 +218,7 @@ STATUS=$(post '{
   "servings": 4,
   "prepTime": 15,
   "cookTime": 0,
-  "categories": ["Salad", "Lunch"],
+  "categories": ["Lunch"],
   "ingredients": [
     { "name": "Tomatoes",          "quantity": 3,    "unit": ""    },
     { "name": "Cucumber",          "quantity": 1,    "unit": ""    },
@@ -275,7 +275,7 @@ STATUS=$(post '{
   "servings": 6,
   "prepTime": 20,
   "cookTime": 40,
-  "categories": ["Soup", "Dinner"],
+  "categories": ["Dinner"],
   "ingredients": [
     { "name": "Canned tomatoes",   "quantity": 400,  "unit": "g"   },
     { "name": "Cannellini beans",  "quantity": 400,  "unit": "g"   },
